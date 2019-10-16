@@ -1,0 +1,37 @@
+//サンプルコード
+
+
+function sendToSlack(title, body) {
+  // slack のwebhook URL
+  let url = "https://hooks.slack.com/services";
+  let data = { 
+    "attachments": [{
+      "color": "#48bdcc",
+      "title": title,
+      "text" : body,
+    }],
+  };
+  let payload = JSON.stringify(data);
+  let options = {
+    "method" : "POST",
+    "contentType" : "application/json",
+    "payload" : payload
+  };
+  let response = UrlFetchApp.fetch(url, options);
+  console.log(body);
+}
+
+function onFormSubmit(e){
+
+  let body = ""; 
+  let itemResponse = e.response.getItemResponses();
+
+  for (let j = 0; j < itemResponse.length; j++){    
+    let formData = itemResponse[j];
+    let title = formData.getItem().getTitle();
+    let response = formData.getResponse();
+    body = body + "\n" + "【" + title + "】" + response;
+  }
+  
+  sendToSlack("フォームに投稿がありました。", body);
+}
